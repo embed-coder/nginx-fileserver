@@ -1,0 +1,33 @@
+server {
+    listen 443 ssl;
+
+    ssl_certificate /opt/skylab/device_manager/cert.pem;
+    ssl_certificate_key /opt/skylab/device_manager/key.pem;
+
+    server_name example.com;
+
+    location / {
+        proxy_pass http://0.0.0.0:10000;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+server {
+    listen 8443 ssl;
+    #listen [::]:80;
+
+    ssl_certificate /home/john/work/nginx-conf/fileserver_cert.pem;
+    ssl_certificate_key /home/john/work/nginx-conf/fileserver_key.pem;
+
+    #server_name 192.168.1.162;
+    server_name 219.74.116.167;
+
+    root /home/john/fileservers;
+    autoindex on;
+
+    location / {
+        try_files $uri $uri/ =404;
+        auth_basic "Restricted Content";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+    }
+}
